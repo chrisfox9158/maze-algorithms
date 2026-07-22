@@ -1,7 +1,6 @@
 # Library imports
 import pygame
 import sys
-import random
 
 # Local imports
 from generation import Generator
