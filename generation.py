@@ -5,7 +5,7 @@ import random
 from config import MAZE_SPECS
 
 # Blank maze generation
-class Generator:
+class RecursiveBacktracking:
     """Generates a maze via Recursive Backtracking."""
     def __init__(self):
         self.width = MAZE_SPECS["width"] if MAZE_SPECS["width"] % 2 != 0 else MAZE_SPECS["width"] + 1
@@ -33,3 +33,14 @@ class Generator:
                 self.carve(new_x, new_y, maze)
 
         return maze
+
+    def add_entry_exit(self, start_x, start_y, maze):
+        maze[(start_x, start_y - 1)] = 0
+        maze[(self.width - 2, self.height - 1)] = 0
+        return maze
+
+    def generate_maze(self, start_x, start_y):
+        blank_maze = self.build()
+        carved_maze = self.carve(start_x, start_y, blank_maze)
+        complete_maze = self.add_entry_exit(start_x, start_y, carved_maze)
+        return complete_maze

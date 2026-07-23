@@ -3,7 +3,7 @@ import pygame
 import sys
 
 # Local imports
-from generation import Generator
+from generation import RecursiveBacktracking
 from config import MAZE_SPECS
 
 # Pygame visualizer
@@ -12,9 +12,8 @@ CELL_SIZE = MAZE_SPECS["cell_size"]
 def main():
     pygame.init()
     
-    generator = Generator()
-    blank_maze = generator.build()
-    carved_maze = generator.carve(1, 1, blank_maze)
+    generator = RecursiveBacktracking()
+    maze = generator.generate_maze(1, 1)
     
     window_width = generator.width * CELL_SIZE
     window_height = generator.height * CELL_SIZE
@@ -32,7 +31,7 @@ def main():
                 
         screen.fill(COLOR_WALL)
         
-        for (x, y), value in carved_maze.items():
+        for (x, y), value in maze.items():
             pixel_x = x * CELL_SIZE
             pixel_y = y * CELL_SIZE
             color = COLOR_PATH if value == 0 else COLOR_WALL
