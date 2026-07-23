@@ -34,13 +34,20 @@ class RecursiveBacktracking:
 
         return maze
 
-    def add_entry_exit(self, start_x, start_y, maze):
-        maze[(start_x, start_y - 1)] = 0
-        maze[(self.width - 2, self.height - 1)] = 0
+    def add_hard_walls(self, maze):
+        walled_maze =  {(x, y): (2 if (x == 0 or x == self.width - 1) or (y == 0 or y == self.height - 1) else cell) for (x, y), cell in maze.items()}
+        return walled_maze
+
+    def add_entry_exit(self, maze):
+        algorithm_entry = (1, 1) # Entry for the ALGORITHM (player), NOT the generator
+        algorithm_exit = (self.width - 2, self.height - 2) # Exit for the ALGORITHM (player)
+        maze[algorithm_entry] = 3
+        maze[algorithm_exit] = 4
         return maze
 
-    def generate_maze(self, start_x, start_y):
+    def generate_maze(self):
         blank_maze = self.build()
-        carved_maze = self.carve(start_x, start_y, blank_maze)
-        complete_maze = self.add_entry_exit(start_x, start_y, carved_maze)
+        carved_maze = self.carve(1, 1, blank_maze)
+        walled_maze = self.add_hard_walls(carved_maze)
+        complete_maze = self.add_entry_exit(walled_maze)
         return complete_maze
