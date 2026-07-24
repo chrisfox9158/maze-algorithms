@@ -41,7 +41,6 @@ class GenerationVisualizer:
             screen.fill(COLOR_WALL)
             self._advance()
             self._draw_progress(screen)
-            self._draw_complete(screen, window_width, window_height)
 
             pygame.display.flip()
             clock.tick(self.speed)
