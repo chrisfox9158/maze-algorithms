@@ -2,16 +2,13 @@
 from collections import deque
 
 # Local imports
-from generation import RecursiveBacktracking
 from config import MAZE_SPECS
+from algorithms.result import AlgorithmResult
 
 # Breadth-first search algorithm
 class BFS:
     def __init__(self):
         self.x, self.y = 1, 1
-        self.maze_width = MAZE_SPECS["width"]
-        self.maze_height = MAZE_SPECS["height"]
-        self.prev = {}
 
     def get_open_neighbors(self, x, y, maze):
         open_neighbors = []
@@ -29,27 +26,35 @@ class BFS:
                 frontier.append(cell)
         return frontier
 
-    def run(self, start_x, start_y, maze):
+    def run(self, maze):
         visited = set()
-        visit_order = []
-        self.x, self.y = start_x, start_y
+        exploration = []
+        self.x, self.y = 1, 1
 
         queue = deque([[(self.x, self.y)]])
         visited.add((self.x, self.y))
-        visit_order.append((self.x, self.y))
+        exploration.append((self.x, self.y))
 
         while queue:
             current_path = queue.popleft()
             self.x, self.y = current_path[-1]
 
             if maze[(self.x, self.y)] == 3:
-                return visit_order, current_path
-            
+                return AlgorithmResult(
+                    exploration=exploration,
+                    solution=current_path,
+                    stats={"cells_visited": len(exploration)},
+                )
+
             for cell in self.get_frontier(visited, self.x, self.y, maze):
                 visited.add(cell)
-                visit_order.append(cell)
+                exploration.append(cell)
                 new_path = list(current_path)
                 new_path.append(cell)
                 queue.append(new_path)
 
-        return visit_order, None
+        return AlgorithmResult(
+            exploration=exploration,
+            solution=None,
+            stats={"cells_visited": len(exploration)},
+        )
