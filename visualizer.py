@@ -5,22 +5,22 @@ import sys
 # Local imports
 from generation import RecursiveBacktracking
 from algorithms.bfs import BFS
-from config import MAZE_SPECS, DISPLAY_SPECS
+from config import MAZE_SPECS
 
 # Pygame visualizer
 CELL_SIZE = MAZE_SPECS["cell_size"]
-SPEED = DISPLAY_SPECS["tick_speed"]
 
 def main():
     pygame.init()
 
     # Maze instance and solution "runner" setup
-    bfs = BFS()
     generator = RecursiveBacktracking()
     maze = generator.generate_maze()
-    solution = bfs.run(1, 1, maze)
+    bfs = BFS()
+    exploration, solution = bfs.run(1, 1, maze)
     solution_idx = 0
-    path = []
+    explore_idx = 0
+    solution_path = []
 
     # General clock and window setup
     clock = pygame.time.Clock()
@@ -30,8 +30,7 @@ def main():
     pygame.display.set_caption("Maze Visualizer")
 
     # Color configurations
-    COLOR_BORDER = (48, 48, 56) # Dark slate gray
-    COLOR_WALL = (112, 128, 144) # Slate gray
+    COLOR_WALL = (92, 108, 124) # Slate gray
     COLOR_PATH = (255, 255, 255) # White
 
     # Rendering loop
@@ -50,21 +49,26 @@ def main():
                 color = COLOR_PATH 
             elif value == 1:
                 color = COLOR_WALL
-            elif value == 2:
-                color = COLOR_BORDER
-            elif value == 3: # entry
+            elif value == 2: # entry
                 color = (255, 0, 0)
-            elif value == 4: # exit
+            elif value == 3: # exit
                 color = (0, 255, 0)
             pygame.draw.rect(screen, color, (pixel_x, pixel_y, CELL_SIZE, CELL_SIZE))
 
-        if solution_idx < len(solution): # "Runner" display (follows solution path)
-            runner_pos = solution[solution_idx]
-            path.append(runner_pos)
+        if explore_idx < len(exploration): # "Explorer" display (follows visited paths)
+            SPEED = 100
+            explore_idx += 1
+                
+        elif solution_idx < len(solution): # "Runner" display (follows solution path)
+            SPEED = 30
+            solution_path.append(solution[solution_idx])
             solution_idx += 1
-            for step in path:
-                pygame.draw.rect(screen, (0, 0, 255), (step[0] * CELL_SIZE, step[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
-        else: # "Run complete" pop-up
+
+        for cell in exploration[:explore_idx]:
+            pygame.draw.rect(screen, (70, 70, 100), (cell[0]*CELL_SIZE, cell[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        for step in solution_path:
+            pygame.draw.rect(screen, (0, 0, 255), (step[0] * CELL_SIZE, step[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        if explore_idx >= len(exploration) and solution_idx >= len(solution): # "Run complete" pop-up
             font = pygame.font.Font(None, 50)
             text = font.render("Run complete!", True, (0, 0, 0))
             text_box = text.get_rect()

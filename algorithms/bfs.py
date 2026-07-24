@@ -31,28 +31,25 @@ class BFS:
 
     def run(self, start_x, start_y, maze):
         visited = set()
+        visit_order = []
         self.x, self.y = start_x, start_y
 
         queue = deque([[(self.x, self.y)]])
         visited.add((self.x, self.y))
+        visit_order.append((self.x, self.y))
 
         while queue:
             current_path = queue.popleft()
             self.x, self.y = current_path[-1]
 
-            if maze[(self.x, self.y)] == 4:
-                return current_path
+            if maze[(self.x, self.y)] == 3:
+                return visit_order, current_path
             
             for cell in self.get_frontier(visited, self.x, self.y, maze):
                 visited.add(cell)
+                visit_order.append(cell)
                 new_path = list(current_path)
                 new_path.append(cell)
                 queue.append(new_path)
 
-        return None
-
-# Testing
-bfs = BFS()
-generator = RecursiveBacktracking()
-maze = generator.generate_maze()
-print(bfs.run(1, 1, maze))
+        return visit_order, None
