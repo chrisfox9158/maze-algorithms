@@ -35,6 +35,7 @@ class RecursiveBacktracking:
         return maze
 
     def add_entry_exit(self, maze):
+        """Add entry and exit point cell values."""
         algorithm_entry = (1, 1) # Entry for the ALGORITHM (player), NOT the generator
         algorithm_exit = (self.width - 2, self.height - 2) # Exit for the ALGORITHM (player)
         maze[algorithm_entry] = 2
@@ -42,6 +43,7 @@ class RecursiveBacktracking:
         return maze
 
     def generate_maze(self):
+        """Orchestrate full maze generation."""
         blank_maze = self.build()
         carved_maze = self.carve(1, 1, blank_maze)
         complete_maze = self.add_entry_exit(carved_maze)
