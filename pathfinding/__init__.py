@@ -1,5 +1,5 @@
 from .bfs import BFS
 
-ALGORITHMS = {
+PATHFINDING = {
     "BFS": BFS,
 }

@@ -3,7 +3,7 @@ from collections import deque
 
 # Local imports
 from config import MAZE_SPECS
-from algorithms.result import AlgorithmResult
+from pathfinding.result import AlgorithmResult
 
 # Breadth-first search algorithm
 class BFS:
