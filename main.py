@@ -5,25 +5,28 @@ from pathlib import Path
 # Local imports
 from pathfinding import PATHFINDING
 from generation import GENERATORS
-from outputs.visualizer import Visualizer
+from outputs.visualizer import PathfindingVisualizer, GenerationVisualizer
 
 class SingleRun:
     """Run a single episode for a given generator and pathfinder."""
     def run(self):
         generator_choice = input(f"Generator ({' / '.join(GENERATORS)}): ")
         generator = GENERATORS[generator_choice]()
-        maze = generator.generate_maze()
+        generation_result = generator.generate_maze()
 
         pathfinder_choice = input(f"Pathfinder ({' / '.join(PATHFINDING)}): ")
         pathfinder = PATHFINDING[pathfinder_choice]()
-        results = pathfinder.run(maze)
+        pathfinding_result = pathfinder.run(generation_result.maze)
 
-        self.visualize(maze, results)
-        return results
+        self.visualize(generation_result, pathfinding_result)
+        return pathfinding_result
 
-    def visualize(self, maze, results):
-        visualization = Visualizer(maze, results)
-        visualization.run()
+    def visualize(self, generation_result, pathfinding_result):
+        generation_visualization = GenerationVisualizer(generation_result)
+        generation_visualization.run()
+
+        pathfinding_visualization = PathfindingVisualizer(generation_result.maze, pathfinding_result)
+        pathfinding_visualization.run()
 
 class MultiRun():
     """Run multiple episodes for a given generator and pathfinder."""
@@ -34,10 +37,10 @@ class MultiRun():
 
         for episode in range(episode_count):
             generator = GENERATORS[generator_choice]()
-            maze = generator.generate_maze()
+            generation_result = generator.generate_maze()
 
             pathfinder = PATHFINDING[pathfinder_choice]()
-            results.append(pathfinder.run(maze))
+            results.append(pathfinder.run(generation_result.maze))
 
         return results
 

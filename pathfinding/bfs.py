@@ -3,7 +3,7 @@ from collections import deque
 
 # Local imports
 from config import MAZE_SPECS
-from pathfinding.result import AlgorithmResult
+from pathfinding.result import PathfindingResult
 
 # Breadth-first search algorithm
 class BFS:
@@ -40,7 +40,7 @@ class BFS:
             self.x, self.y = current_path[-1]
 
             if maze[(self.x, self.y)] == 3:
-                return AlgorithmResult(
+                return PathfindingResult(
                     exploration=exploration,
                     solution=current_path,
                     stats={"cells_visited": len(exploration)},
@@ -53,7 +53,7 @@ class BFS:
                 new_path.append(cell)
                 queue.append(new_path)
 
-        return AlgorithmResult(
+        return PathfindingResult(
             exploration=exploration,
             solution=None,
             stats={"cells_visited": len(exploration)},

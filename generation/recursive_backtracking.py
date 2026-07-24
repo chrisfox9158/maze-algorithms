@@ -2,6 +2,7 @@
 import random
 
 # Local imports
+from generation.result import GenerationResult
 from config import MAZE_SPECS
 
 # Blank maze generation
@@ -16,9 +17,13 @@ class RecursiveBacktracking:
         maze = {(x, y): 1 for x in range(self.width) for y in range(self.height)}
         return maze
 
-    def carve(self, start_x, start_y, maze):
+    def carve(self, start_x, start_y, maze, carved_paths=None):
         """Given a blank maze and starting positions, uses Recursive Backtracking to build paths."""
+        if carved_paths is None:
+            carved_paths = []
+
         maze[(start_x, start_y)] = 0
+        carved_paths.append((start_x, start_y))
 
         directions = [(0, -2), (0, 2), (-2, 0), (2, 0)]
         random.shuffle(directions)
@@ -29,10 +34,12 @@ class RecursiveBacktracking:
             new_x, new_y = current_x + dx, current_y + dy
 
             if 0 <= new_x < self.width and 0 <= new_y < self.height and maze[(new_x, new_y)] == 1:
-                maze[(current_x + dx // 2, current_y + dy // 2)] = 0
-                self.carve(new_x, new_y, maze)
+                connector = (current_x + dx // 2, current_y + dy // 2)
+                maze[connector] = 0
+                carved_paths.append(connector)
+                self.carve(new_x, new_y, maze, carved_paths)
 
-        return maze
+        return maze, carved_paths
 
     def add_entry_exit(self, maze):
         """Add entry and exit point cell values."""
@@ -45,6 +52,6 @@ class RecursiveBacktracking:
     def generate_maze(self):
         """Orchestrate full maze generation."""
         blank_maze = self.build()
-        carved_maze = self.carve(1, 1, blank_maze)
+        carved_maze, carved_paths = self.carve(1, 1, blank_maze)
         complete_maze = self.add_entry_exit(carved_maze)
-        return complete_maze
+        return GenerationResult(carved_paths=carved_paths, maze=complete_maze)
